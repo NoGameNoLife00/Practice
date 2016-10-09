@@ -29,7 +29,7 @@ public final class CastUtil {
      * @return
      */
     public static double castDouble(Object obj) {
-        return CastUtil.castString(obj, 0);
+        return CastUtil.castDouble(obj, 0);
     }
 
 
