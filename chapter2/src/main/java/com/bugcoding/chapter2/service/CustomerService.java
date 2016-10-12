@@ -5,13 +5,8 @@ import com.bugcoding.chapter2.model.Customer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-import java.sql.*;
 import java.util.*;
 
-/**
- * Created by tao on 2016/10/7.
- */
 public class CustomerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseHelper.class);
 
@@ -32,7 +27,8 @@ public class CustomerService {
      * @return
      */
     public Customer getCustomer(long id) {
-        return null;
+        String sql = "SELECT * FROM customer WHERE id =" + id;
+        return DatabaseHelper.queryEntity(Customer.class, sql);
     }
 
     /**

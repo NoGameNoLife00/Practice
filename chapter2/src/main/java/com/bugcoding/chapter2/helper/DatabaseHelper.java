@@ -1,5 +1,6 @@
 package com.bugcoding.chapter2.helper;
 
+import com.bugcoding.chapter2.util.CollectionUtil;
 import com.bugcoding.chapter2.util.PropsUtil;
 import com.sun.javafx.collections.MapListenerHelper;
 import org.apache.commons.collections4.CollectionUtils;
@@ -12,6 +13,9 @@ import org.apache.commons.dbutils.handlers.MapListHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -62,22 +66,6 @@ public final class DatabaseHelper {
         return conn;
     }
 
-    /**
-     * 关闭数据库连接
-     */
-    public static void closeConnection() {
-        Connection conn = CONNECTION_HOLDER.get();
-        if (conn != null) {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                LOGGER.error("close connection failure", e);
-                throw new RuntimeException(e);
-            } finally {
-                CONNECTION_HOLDER.remove();
-            }
-        }
-    }
 
     /**
      * 查询实体列表
@@ -96,7 +84,6 @@ public final class DatabaseHelper {
             LOGGER.error("query entity list failure", e);
             throw new RuntimeException(e);
         } finally {
-            closeConnection();
         }
         return entityList;
     }
@@ -118,7 +105,7 @@ public final class DatabaseHelper {
             LOGGER.error("query entity failure", e);
             throw new RuntimeException(e);
         } finally {
-            closeConnection();
+
         }
         return entity;
     }
@@ -147,7 +134,7 @@ public final class DatabaseHelper {
      * @param params
      * @return 更新多少条记录
      */
-    public static int executeUpdate(String sql, Object params) {
+    public static int executeUpdate(String sql, Object... params) {
         int rows = 0;
         try {
             Connection conn = getConnection();
@@ -156,7 +143,6 @@ public final class DatabaseHelper {
             LOGGER.error("execute update failure", e);
             throw new RuntimeException(e);
         } finally {
-            closeConnection();
         }
         return rows;
     }
@@ -168,10 +154,10 @@ public final class DatabaseHelper {
         }
         String sql = "INSERT INTO " + getTableName(entityClass);
         StringBuilder columns = new StringBuilder("(");
-        StringBuilder values = new StringBuilder(")");
+        StringBuilder values = new StringBuilder("(");
         for (String fieldName : fieldMap.keySet()) {
             columns.append(fieldName).append(", ");
-            columns.append("?, ");
+            values.append("?, ");
         }
         columns.replace(columns.lastIndexOf(", "), columns.length(), ")");
         values.replace(values.lastIndexOf(", "), values.length(), ")");
@@ -194,7 +180,7 @@ public final class DatabaseHelper {
             return false;
         }
 
-        String sql = "UPDATA " + getTableName(entityClass) + " SET ";
+        String sql = "UPDATE " + getTableName(entityClass) + " SET ";
         StringBuilder columns = new StringBuilder();
         for (String filedName : fieldMap.keySet()) {
             columns.append(filedName).append("=?, ");
@@ -208,9 +194,30 @@ public final class DatabaseHelper {
         return executeUpdate(sql, params) == 1;
     }
 
+    /**
+     * 删除实体
+     * @param entityClass
+     * @param id
+     * @param <T>
+     * @return
+     */
     public static <T> boolean deleteEntity(Class<T> entityClass, long id) {
         String sql = "DELETE FROM " + getTableName(entityClass) + " WHERE id=?";
         return executeUpdate(sql, id) == 1;
+    }
+
+    public static void executeSqlFile(String filePath) {
+        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        try {
+            String sql;
+            while ((sql = reader.readLine()) != null) {
+                DatabaseHelper.executeUpdate(sql);
+            }
+        } catch (Exception e) {
+            LOGGER.error("execute sql file failure", e);
+        }
+
     }
 
     public static String getTableName(Class<?> entityClass) {

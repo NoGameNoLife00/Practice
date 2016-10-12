@@ -1,5 +1,6 @@
 package com.bugcoding.chapter2.test;
 
+import com.bugcoding.chapter2.helper.DatabaseHelper;
 import com.bugcoding.chapter2.model.Customer;
 import com.bugcoding.chapter2.service.CustomerService;
 import org.junit.Assert;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by tao on 2016/10/7.
+ *
  */
 public class CustomerServiceTest {
     private final CustomerService customerService;
@@ -21,8 +22,9 @@ public class CustomerServiceTest {
     }
 
     @Before
-    public void init() {
-
+    public void init() throws Exception{
+        String file="sql/customer_init.sql";
+        DatabaseHelper.executeSqlFile(file);
     }
 
     @Test
