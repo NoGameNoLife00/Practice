@@ -2,9 +2,6 @@ package com.bugcoding.chapter2.helper;
 
 import com.bugcoding.chapter2.util.CollectionUtil;
 import com.bugcoding.chapter2.util.PropsUtil;
-import com.sun.javafx.collections.MapListenerHelper;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.iterators.ObjectArrayIterator;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
@@ -17,7 +14,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.*;
 
