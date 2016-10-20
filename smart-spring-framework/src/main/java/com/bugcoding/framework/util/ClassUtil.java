@@ -43,6 +43,10 @@ public final class ClassUtil {
         return  cls;
     }
 
+    public static Class<?> loadClass(String className) {
+        return loadClass(className, false);
+    }
+
     /**
      * 获取指定包名下所有类
      * @param packageName
