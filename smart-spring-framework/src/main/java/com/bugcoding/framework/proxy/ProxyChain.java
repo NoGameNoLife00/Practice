@@ -1,5 +1,7 @@
 package com.bugcoding.framework.proxy;
 
+import net.sf.cglib.proxy.MethodProxy;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +27,7 @@ public class ProxyChain {
         this.targetClass = targetClass;
         this.targetObject = targetObject;
         this.targetMethod = targetMethod;
-        this.targetProxy = methodProxy;
+        this.methodProxy = methodProxy;
         this.methodParams = methodParams;
         this.proxyList = proxyList;
     }
