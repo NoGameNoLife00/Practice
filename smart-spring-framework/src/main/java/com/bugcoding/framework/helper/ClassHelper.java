@@ -5,6 +5,7 @@ import com.bugcoding.framework.annotation.Controller;
 import com.bugcoding.framework.annotation.Service;
 import com.bugcoding.framework.util.ClassUtil;
 
+import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -64,5 +65,25 @@ public final class ClassHelper {
         beanClassSet.addAll(getServiceClassSet());
         beanClassSet.addAll(getControllerClassSet());
         return beanClassSet;
+    }
+
+    public static Set<Class<?>> getClassSetBySupper(Class<?> superClass) {
+        Set<Class<?>> classSet = new HashSet<Class<?>>();
+        for (Class<?> cls : CLASS_SET) {
+            if (superClass.isAssignableFrom(cls) && !superClass.equals(cls)) {
+                classSet.add(cls);
+            }
+        }
+        return classSet;
+    }
+
+    public static Set<Class<?>> getClassSetByAnnotation(Class<? extends Annotation>
+                                                                annotationClass) {
+        Set<Class<?>> classSet = new HashSet<Class<?>>();
+        for (Class<?> cls : classSet) {
+            if (cls.isAnnotationPresent(annotationClass))
+                classSet.add(cls);
+        }
+        return classSet;
     }
 }
