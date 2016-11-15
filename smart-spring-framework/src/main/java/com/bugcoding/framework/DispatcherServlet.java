@@ -5,7 +5,9 @@ import com.bugcoding.framework.bean.Handler;
 import com.bugcoding.framework.bean.Param;
 import com.bugcoding.framework.bean.View;
 import com.bugcoding.framework.helper.*;
-import com.bugcoding.framework.util.*;
+import com.bugcoding.framework.util.JsonUtil;
+import com.bugcoding.framework.util.ReflectionUtil;
+import com.bugcoding.framework.util.StringUtil;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -18,8 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -47,49 +47,53 @@ public class DispatcherServlet extends HttpServlet{
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 //        super.service(req, resp);
+        ServletHelper.init(req, resp);
+        try {
+            // 获取请求方法与路径
+            String requestMethod = req.getMethod().toLowerCase();
+            String requestPath = req.getPathInfo();
 
-        // 获取请求方法与路径
-        String requestMethod = req.getMethod().toLowerCase();
-        String requestPath = req.getPathInfo();
-
-        if (requestPath.equals("/favicon.ico")) {
-            return;
-        }
-
-        // 获取Action
-        Handler handler = ControllerHelper.getHandler(requestMethod, requestPath);
-
-        if (handler != null) {
-            // 获取Controller类及其Bean实例
-            Class<?> controllerClass = handler.getControllerClass();
-            Object controllerBean = BeanHelper.getBean(controllerClass);
-
-            Param param;
-            if (UploadHepler.isMultipart(req)) {
-                param = UploadHepler.createParam(req);
-            } else {
-                param = RequestHelper.createParam(req);
+            if (requestPath.equals("/favicon.ico")) {
+                return;
             }
 
-            Object result;
-            // 调用Action方法
-            Method actionMethod = handler.getActionMethod();
+            // 获取Action
+            Handler handler = ControllerHelper.getHandler(requestMethod, requestPath);
 
-            if (param.isEmpty()){
-                result = ReflectionUtil.invokeMethod(controllerBean, actionMethod);
-            } else {
-                result = ReflectionUtil.invokeMethod(controllerBean, actionMethod, param);
+            if (handler != null) {
+                // 获取Controller类及其Bean实例
+                Class<?> controllerClass = handler.getControllerClass();
+                Object controllerBean = BeanHelper.getBean(controllerClass);
+
+                Param param;
+                if (UploadHepler.isMultipart(req)) {
+                    param = UploadHepler.createParam(req);
+                } else {
+                    param = RequestHelper.createParam(req);
+                }
+
+                Object result;
+                // 调用Action方法
+                Method actionMethod = handler.getActionMethod();
+
+                if (param.isEmpty()){
+                    result = ReflectionUtil.invokeMethod(controllerBean, actionMethod);
+                } else {
+                    result = ReflectionUtil.invokeMethod(controllerBean, actionMethod, param);
+                }
+
+                // 处理Action方法返回值
+                if (result instanceof View) {
+                    // 返回JSP页面
+                    handleViewResult((View) result, req, resp);
+                } else if (result instanceof Data) {
+                    // 返回Json数据
+                    handleDataResult((Data) result, resp);
+                }
+
             }
-
-            // 处理Action方法返回值
-            if (result instanceof View) {
-                // 返回JSP页面
-                handleViewResult((View) result, req, resp);
-            } else if (result instanceof Data) {
-                // 返回Json数据
-                handleDataResult((Data) result, resp);
-            }
-
+        } finally {
+            ServletHelper.destroy();
         }
     }
 
