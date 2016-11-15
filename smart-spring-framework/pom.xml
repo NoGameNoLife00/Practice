@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.bugcoding</groupId>
-    <artifactId>smart-spring-frmework</artifactId>
+    <artifactId>smart-spring-framework</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
