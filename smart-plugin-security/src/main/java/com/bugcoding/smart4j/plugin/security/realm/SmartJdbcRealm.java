@@ -1,10 +1,10 @@
-package plugin.security.realm;
+package com.bugcoding.smart4j.plugin.security.realm;
 
 
 import com.bugcoding.framework.helper.DatabaseHelper;
 import org.apache.shiro.realm.jdbc.JdbcRealm;
-import plugin.security.SecurityConfig;
-import plugin.security.password.Md5CredentialsMatcher;
+import com.bugcoding.smart4j.plugin.security.SecurityConfig;
+import com.bugcoding.smart4j.plugin.security.password.Md5CredentialsMatcher;
 
 /**
  * »ùÓÚJdbcµÄRealm

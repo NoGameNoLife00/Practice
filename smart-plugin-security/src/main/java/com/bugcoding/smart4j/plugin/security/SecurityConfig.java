@@ -1,4 +1,4 @@
-package plugin.security;
+package com.bugcoding.smart4j.plugin.security;
 
 import com.bugcoding.framework.helper.ConfigHelper;
 import org.slf4j.Logger;

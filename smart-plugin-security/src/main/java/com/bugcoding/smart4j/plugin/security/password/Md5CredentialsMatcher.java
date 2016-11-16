@@ -1,4 +1,4 @@
-package plugin.security.password;
+package com.bugcoding.smart4j.plugin.security.password;
 
 import com.bugcoding.framework.util.CodecUtil;
 import org.apache.shiro.authc.AuthenticationInfo;

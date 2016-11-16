@@ -1,4 +1,4 @@
-package plugin.security.exception;
+package com.bugcoding.smart4j.plugin.security.exception;
 
 /**
  * 授权异常（当权限无效时抛出）

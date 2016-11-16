@@ -1,4 +1,4 @@
-package plugin.security;
+package com.bugcoding.smart4j.plugin.security;
 
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
@@ -7,8 +7,8 @@ import org.apache.shiro.mgt.RealmSecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.servlet.ShiroFilter;
-import plugin.security.realm.SmartCustomRealm;
-import plugin.security.realm.SmartJdbcRealm;
+import com.bugcoding.smart4j.plugin.security.realm.SmartCustomRealm;
+import com.bugcoding.smart4j.plugin.security.realm.SmartJdbcRealm;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

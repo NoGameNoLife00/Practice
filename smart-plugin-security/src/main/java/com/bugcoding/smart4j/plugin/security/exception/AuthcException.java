@@ -1,4 +1,4 @@
-package plugin.security.exception;
+package com.bugcoding.smart4j.plugin.security.exception;
 
 /**
  * »œ÷§“Ï≥£

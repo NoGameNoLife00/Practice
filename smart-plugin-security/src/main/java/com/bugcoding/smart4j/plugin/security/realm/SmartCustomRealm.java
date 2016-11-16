@@ -1,14 +1,14 @@
-package plugin.security.realm;
+package com.bugcoding.smart4j.plugin.security.realm;
 
+import com.bugcoding.smart4j.plugin.security.SmartSecurity;
+import com.bugcoding.smart4j.plugin.security.password.Md5CredentialsMatcher;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
-import plugin.security.SecurityConstant;
-import plugin.security.SmartSecurity;
-import plugin.security.password.Md5CredentialsMatcher;
+import com.bugcoding.smart4j.plugin.security.SecurityConstant;
 
 import java.util.HashSet;
 import java.util.Set;

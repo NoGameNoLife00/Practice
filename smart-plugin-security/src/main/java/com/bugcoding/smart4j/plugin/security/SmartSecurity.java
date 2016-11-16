@@ -1,4 +1,4 @@
-package plugin.security;
+package com.bugcoding.smart4j.plugin.security;
 
 import java.util.Set;
 
