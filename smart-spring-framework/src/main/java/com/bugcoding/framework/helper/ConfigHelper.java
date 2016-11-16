@@ -10,6 +10,39 @@ public class ConfigHelper {
 
     private  static final Properties CONFIG_PROPS = PropsUtil.loadProps(ConfigConstant.CONFIG_FILE);
 
+
+    /**
+     * 获取String类型属性值
+     * @param key
+     * @return
+     */
+    public static String getString(String key) {
+        return PropsUtil.getString(CONFIG_PROPS, key);
+    }
+
+    public static String getString(String key, String defaultValue) {
+        return PropsUtil.getString(CONFIG_PROPS, key, defaultValue);
+    }
+
+    /**
+     * 获取int类型属性
+     */
+    public static int getInt(String key) {
+        return PropsUtil.getInt(CONFIG_PROPS, key);
+    }
+
+    public static int getInt(String key, int defaultValue) {
+        return PropsUtil.getInt(CONFIG_PROPS, key, defaultValue);
+    }
+
+    public static boolean getBoolean(String key) {
+        return PropsUtil.getBoolean(CONFIG_PROPS, key);
+    }
+
+    public static boolean getBoolean(String key, boolean defaultValue) {
+        return PropsUtil.getBoolean(CONFIG_PROPS, key, defaultValue);
+    }
+
     /**
      * 获取JDBC 驱动
      * @return

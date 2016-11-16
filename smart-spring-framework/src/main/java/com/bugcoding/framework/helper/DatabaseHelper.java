@@ -3,6 +3,7 @@ package com.bugcoding.framework.helper;
 
 import com.bugcoding.framework.util.CollectionUtil;
 import com.bugcoding.framework.util.PropsUtil;
+import com.bugcoding.framework.util.StringUtil;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
@@ -11,6 +12,8 @@ import org.apache.commons.dbutils.handlers.MapListHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,25 +26,31 @@ import java.util.*;
  */
 public final class DatabaseHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseHelper.class);
-    private static final ThreadLocal<Connection> CONNECTION_HOLDER;
-    private static final QueryRunner QUERY_RUNNER;
-    private static final BasicDataSource DATA_SOURCE;
 
-    static {
-        CONNECTION_HOLDER = new ThreadLocal<Connection>();
-        QUERY_RUNNER = new QueryRunner();
+    private static final ThreadLocal<Connection> connContainer = new ThreadLocal<Connection>();
+    private static final QueryRunner queryRunner = new QueryRunner();
+    private static final DataSource dataSource = getDataSource();
 
+    public static DataSource getDataSource() {
         Properties conf = PropsUtil.loadProps("config.properties");
         String driver = conf.getProperty("jdbc.driver");
         String url = conf.getProperty("jdbc.url");
         String username = conf.getProperty("jdbc.username");
         String password = conf.getProperty("jdbc.password");
-
-        DATA_SOURCE = new BasicDataSource();
-        DATA_SOURCE.setDriverClassName(driver);
-        DATA_SOURCE.setUrl(url);
-        DATA_SOURCE.setUsername(username);
-        DATA_SOURCE.setPassword(password);
+        BasicDataSource ds = new BasicDataSource();
+        if (StringUtil.isNotEmpty(driver)) {
+            ds.setDriverClassName(driver);
+        }
+        if (StringUtil.isNotEmpty(url)) {
+            ds.setUrl(url);
+        }
+        if (StringUtil.isNotEmpty(username)) {
+            ds.setUsername(username);
+        }
+        if (StringUtil.isNotEmpty(password)) {
+            ds.setPassword(password);
+        }
+        return ds;
     }
 
     /**
@@ -49,15 +58,15 @@ public final class DatabaseHelper {
      * @return
      */
     public static Connection getConnection() {
-        Connection conn = CONNECTION_HOLDER.get();
+        Connection conn = connContainer.get();
         if (conn == null) {
             try {
-                conn = DATA_SOURCE.getConnection();
+                conn = dataSource.getConnection();
             } catch (SQLException e) {
                 LOGGER.error("get connection failure", e);
                 throw new RuntimeException(e);
             } finally {
-                CONNECTION_HOLDER.set(conn);
+                connContainer.set(conn);
             }
         }
         return conn;
@@ -76,7 +85,7 @@ public final class DatabaseHelper {
         List<T> entityList;
         try {
             Connection conn = getConnection();
-            entityList = QUERY_RUNNER.query(conn, sql, new BeanListHandler<T>(entityClass), params);
+            entityList = queryRunner.query(conn, sql, new BeanListHandler<T>(entityClass), params);
         } catch (SQLException e) {
             LOGGER.error("query entity list failure", e);
             throw new RuntimeException(e);
@@ -97,7 +106,7 @@ public final class DatabaseHelper {
         T entity;
         try {
             Connection conn = getConnection();
-            entity = QUERY_RUNNER.query(conn, sql, new BeanHandler<T>(entityClass), params);
+            entity = queryRunner.query(conn, sql, new BeanHandler<T>(entityClass), params);
         } catch (SQLException e) {
             LOGGER.error("query entity failure", e);
             throw new RuntimeException(e);
@@ -117,7 +126,7 @@ public final class DatabaseHelper {
         List<Map<String, Object>> result;
         try {
             Connection conn = getConnection();
-            result = QUERY_RUNNER.query(conn, sql, new MapListHandler(), params);
+            result = queryRunner.query(conn, sql, new MapListHandler(), params);
         } catch (SQLException e) {
             LOGGER.error("execute query failure", e);
             throw  new RuntimeException(e);
@@ -135,7 +144,7 @@ public final class DatabaseHelper {
         int rows = 0;
         try {
             Connection conn = getConnection();
-            rows = QUERY_RUNNER.update(conn, sql, params);
+            rows = queryRunner.update(conn, sql, params);
         } catch (SQLException e) {
             LOGGER.error("execute update failure", e);
             throw new RuntimeException(e);
@@ -234,7 +243,7 @@ public final class DatabaseHelper {
                 throw  new RuntimeException(e);
             }
             finally {
-                CONNECTION_HOLDER.set(conn);
+                connContainer.set(conn);
             }
         }
     }
@@ -253,7 +262,7 @@ public final class DatabaseHelper {
                 throw new RuntimeException(e);
             }
             finally {
-                CONNECTION_HOLDER.remove();
+                connContainer.remove();
             }
         }
     }
@@ -271,7 +280,7 @@ public final class DatabaseHelper {
                 LOGGER.error("rollback transaction failure", e);
                 throw new RuntimeException(e);
             } finally {
-                CONNECTION_HOLDER.remove();
+                connContainer.remove();
             }
         }
     }
