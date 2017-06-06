@@ -5,7 +5,7 @@
 -export([for/3, qsort/1, pythag/1, perms/1,
     odds_and_evens1/1, odds_and_evens2/1,
     sqrt/1, sum/1, sleep/1, flush_buffer/0,
-    priority_receive/0]).
+    priority_receive/0, on_exit/2]).
 
 for(Max, Max, F) -> [F(Max)];
 for(I, Max, F) -> [F(I)|for(I+1,Max,F)].
@@ -82,3 +82,12 @@ priority_receive() ->
                 Any
         end
     end.
+
+on_exit(Pid, Fun) ->
+    spawn(fun() ->
+            Ref = monitor(process, Pid),
+            receive
+                {'DOWN', Ref, process, Pid, Why} ->
+                    Fun(Why)
+            end
+          end).
