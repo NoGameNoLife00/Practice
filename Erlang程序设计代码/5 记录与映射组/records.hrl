@@ -1,0 +1,1 @@
+-record(todo, {status=remider, who=joe, text}).
