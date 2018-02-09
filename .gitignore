@@ -1,0 +1,11 @@
+/chapter1/target
+/chapter1/.idea
+/chapter2/target
+/chapter2/%{user.home}
+/chapter2/.idea
+/smart-spring-framework/.idea
+
+/.beam/
+/Erlang程序设计代码/1 你好并发/*.beam
+/chapter3/.idea
+/Snaker/Library/metadata
